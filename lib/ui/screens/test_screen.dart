@@ -1,20 +1,20 @@
-// ignore_for_file: sized_box_for_whitespace, prefer_const_constructors
-
 import 'package:flutter/material.dart';
-import '../models/question_model.dart';
-import '../shared/component.dart';
-import '../shared/constant.dart';
+import '../../db/questions.dart';
+import '../../constants/colors.dart';
+import '../widgets/answerList.dart';
+import '../widgets/defaultAppBar.dart';
+import '../widgets/questionWidget.dart';
 
-class QuizScreen extends StatefulWidget {
-  const QuizScreen({super.key});
+class TestScreen extends StatefulWidget {
+  const TestScreen({super.key});
 
   @override
-  State<QuizScreen> createState() => _QuizScreenState();
+  State<TestScreen> createState() => _TestScreenState();
 }
 
-class _QuizScreenState extends State<QuizScreen> {
+class _TestScreenState extends State<TestScreen> {
   //define the datas
-  List<Question> questionList = getQuestions();
+  List<Question> questionList = getBPDQuestions();
   int currentQuestionIndex = 0;
   bool qAnswer = false;
   int score = 0;
@@ -27,112 +27,37 @@ class _QuizScreenState extends State<QuizScreen> {
             defaultAppBar(context: context, title: 'BPD Test', isHome: false),
         body: Stack(children: [
           SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
-                    questionWidget(),
-                    SizedBox(
+                    questionWidget(
+                        questionList: questionList,
+                        currentQuestionIndex: currentQuestionIndex),
+                    const SizedBox(
                       height: 10,
                     ),
-                    answerList(),
-                    SizedBox(
+                    answerList(
+                      questionList: questionList,
+                      currentQuestionIndex: currentQuestionIndex,
+                      sum: sum,
+                    ),
+                    const SizedBox(
                       height: 10,
                     ),
                     nextButton(),
-                    SizedBox(
+                    const SizedBox(
                       height: 65,
                     )
                   ]),
             ),
           ),
         ]));
-  }
-
-  questionWidget() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          "Question ${currentQuestionIndex + 1}/${questionList.length.toString()}",
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 20),
-        Container(
-          alignment: Alignment.center,
-          width: double.infinity,
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.orangeAccent,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Text(
-            questionList[currentQuestionIndex].questionText,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        )
-      ],
-    );
-  }
-
-  answerList() {
-    return Column(
-      children: questionList[currentQuestionIndex]
-          .answersList
-          .map(
-            (e) => answerButton(e),
-          )
-          .toList(),
-    );
-  }
-
-  Widget answerButton(Answer answer) {
-    bool isSelected = answer == selectedAnswer;
-
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      height: 48,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          foregroundColor: isSelected ? Colors.white : Colors.black,
-          backgroundColor: isSelected
-              ? Colors.orangeAccent
-              : Color.fromARGB(255, 255, 235, 210),
-          shape: const StadiumBorder(),
-        ),
-        onPressed: () {
-          if (selectedAnswer == null) {
-            sum += answer.persentage;
-            setState(() {
-              selectedAnswer = null;
-              selectedAnswer = answer;
-            });
-          } else if (selectedAnswer != null) {
-            sum += answer.persentage;
-
-            setState(() {
-              selectedAnswer = null;
-              selectedAnswer = answer;
-            });
-          }
-        },
-        child: Text(answer.answerText),
-      ),
-    );
   }
 
   nextButton() {
@@ -145,7 +70,7 @@ class _QuizScreenState extends State<QuizScreen> {
       children: [
         if (currentQuestionIndex > 0)
           Expanded(
-            child: Container(
+            child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.5,
               height: 48,
               child: ElevatedButton(
@@ -159,15 +84,15 @@ class _QuizScreenState extends State<QuizScreen> {
                     currentQuestionIndex--;
                   });
                 },
-                child: Text("Back"),
+                child: const Text("Back"),
               ),
             ),
           ),
-        SizedBox(
+        const SizedBox(
           width: 10,
         ),
         Expanded(
-          child: Container(
+          child: SizedBox(
             width: MediaQuery.of(context).size.width * 0.5,
             height: 48,
             child: ElevatedButton(
@@ -208,52 +133,53 @@ class _QuizScreenState extends State<QuizScreen> {
     return AlertDialog(
       title: Text(
         "Your score is $minimizedAvg",
-        style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+        style:
+            const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
+          const Text(
             'Scoring',
             textAlign: TextAlign.left,
           ),
-          ListTile(
+          const ListTile(
             contentPadding: EdgeInsets.symmetric(horizontal: 2.0),
             title: Text('0 - 25'),
             trailing: Text('Not likely having a BPD'),
           ),
-          Divider(
+          const Divider(
             height: 1,
             color: Colors.grey,
             thickness: 1,
           ),
-          ListTile(
+          const ListTile(
             contentPadding: EdgeInsets.symmetric(horizontal: 2.0),
             title: Text('25 - 50'),
             trailing: Text('Possible having a BPD'),
           ),
-          Divider(
+          const Divider(
             height: 1,
             color: Colors.grey,
             thickness: 1,
           ),
-          ListTile(
+          const ListTile(
             contentPadding: EdgeInsets.symmetric(horizontal: 2.0),
             title: Text('50 - 75'),
             trailing: Text('Likely having a BPD'),
           ),
-          Divider(
+          const Divider(
             height: 1,
             color: Colors.grey,
             thickness: 1,
           ),
-          ListTile(
+          const ListTile(
             contentPadding: EdgeInsets.symmetric(horizontal: 2.0),
             title: Text('75 - 100'),
             trailing: Text('Most likely having a BPD'),
           ),
-          SizedBox(height: 20),
-          Container(
+          const SizedBox(height: 20),
+          SizedBox(
             width: MediaQuery.of(context).size.width * 0.5,
             height: 48,
             child: ElevatedButton(
@@ -270,7 +196,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   selectedAnswer = null;
                 });
               },
-              child: Text("Restart"),
+              child: const Text("Restart"),
             ),
           ),
         ],

@@ -1,13 +1,16 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'package:bpd_test/controllers/homeController.dart';
+import 'package:bpd_test/controllers/testController.dart';
+import 'package:bpd_test/ui/screens/test_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'Home.dart';
-import 'shared/HomeCubit/cubit.dart';
-import 'shared/bloc_observer.dart';
+import 'package:get/get.dart';
+import 'ui/screens/home.dart';
+import 'utilities/bindings.dart';
 
-void main() async {
+void main() {
+  Get.put(HomeController());
+  Get.put(TestController());
   WidgetsFlutterBinding.ensureInitialized();
-  Bloc.observer = MyBlocObserver();
   runApp(const MyApp());
 }
 
@@ -17,9 +20,13 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-        providers: [BlocProvider(create: (context) => HomeCubit())],
-        child: MaterialApp(
+    final heroController =
+        HeroController(); // Create an instance of HeroController
+
+    //onBoarding =true means it finished the page
+    return HeroControllerScope(
+        controller: heroController,
+        child: GetMaterialApp(
             debugShowCheckedModeBanner: false,
             home: AnimatedSplashScreen(
                 splashIconSize: 130,
@@ -29,6 +36,16 @@ class MyApp extends StatelessWidget {
                 ),
                 nextScreen: const Home(),
                 splashTransition: SplashTransition.fadeTransition,
-                backgroundColor: Colors.white)));
+                backgroundColor: Colors.white),
+            getPages: [
+              GetPage(
+                  name: '/home',
+                  page: () => const Home(),
+                  binding: HomeBinding()),
+              GetPage(
+                  name: '/bpdtest',
+                  page: () => const TestScreen(),
+                  binding: TestBinding()),
+            ]));
   }
 }

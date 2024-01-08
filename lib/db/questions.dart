@@ -11,7 +11,7 @@ class Answer {
   Answer(this.answerText, this.persentage);
 }
 
-List<Question> getQuestions() {
+List<Question> getBPDQuestions() {
   List<Question> list = [];
   //ADD questions and answer here
 
