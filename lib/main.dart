@@ -44,7 +44,10 @@ class MyApp extends StatelessWidget {
                   binding: HomeBinding()),
               GetPage(
                   name: '/bpdtest',
-                  page: () => const TestScreen(),
+                  page: () => TestScreen(
+                        title: 'BPD Test',
+                        testType: 1,
+                      ),
                   binding: TestBinding()),
             ]));
   }

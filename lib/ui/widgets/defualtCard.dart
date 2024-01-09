@@ -19,7 +19,7 @@ Widget defualtCard({
         },
         child: Stack(alignment: Alignment.center, children: [
           Container(
-            height: 200,
+            height: 220,
             width: double.infinity,
             decoration: BoxDecoration(
               color: Colors.black,
